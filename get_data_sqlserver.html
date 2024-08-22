@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D3.js met SQL Server Data</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div id="chart"></div>
+
+    <script>
+        async function fetchData() {
+            const response = await fetch('/api/get_data_sqlserver');
+            const data = await response.json();
+            updateChart(data);
+        }
+
+        function updateChart(data) {
+            const svg = d3.select("#chart").append("svg")
+                .attr("width", 500)
+                .attr("height", 500);
+
+            svg.selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("x", (d, i) => i * 40)
+                .attr("y", d => 500 - d.Value)
+                .attr("width", 35)
+                .attr("height", d => d.Value)
+                .attr("fill", "steelblue");
+        }
+
+        fetchData();
+
+        setInterval(fetchData, 5000); // Elke 5 seconden vernieuwen
+    </script>
+</body>
+</html>
